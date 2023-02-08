@@ -1,0 +1,94 @@
+pipelines:
+  branches:
+    dev:
+      - step:
+          name: Deploy Web Front End
+          condition:
+            changesets:
+              includePaths:
+                - "build/**"
+          script:
+            - echo 'mv build/js/vars_dev.js build/js/vars.js' >> .add_variables.sh
+            - chmod 005 .add_variables.sh
+            - cat .add_variables.sh
+            - pipe: atlassian/aws-s3-deploy:1.1.0
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: 'ap-southeast-1'
+                S3_BUCKET: 'install.emporio.ai/dev'
+                LOCAL_PATH: 'build'
+                PRE_EXECUTION_SCRIPT: '.add_variables.sh'
+      - step:
+          name: Build & Package Form Lambda
+          condition:
+            changesets:
+              includePaths:
+                - "form_lambda/**"          
+          script:
+            - apt-get update && apt-get install -y zip
+            - cd form_lambda
+            - zip code.zip lambda_function.py
+          artifacts:
+            - form_lambda/code.zip
+      - step:
+          name: Update Form Lambda code
+          condition:
+            changesets:
+              includePaths:
+                - "form_lambda/**"            
+          script:
+            - pipe: atlassian/aws-lambda-deploy:0.2.1
+              variables:
+                AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+                AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+                AWS_DEFAULT_REGION: 'ap-southeast-1'
+                FUNCTION_NAME: 'connect_onboarding_form_dev'
+                COMMAND: 'update'
+                ZIP_FILE: 'form_lambda/code.zip'
+    master:
+      - step:
+          name: Deploy Web Front End
+          condition:
+            changesets:
+              includePaths:
+                - "build/**"
+          script:
+            - echo 'mv build/js/vars_main.js build/js/vars.js' >> .add_variables.sh
+            - chmod 005 .add_variables.sh
+            - cat .add_variables.sh
+            - pipe: atlassian/aws-s3-deploy:1.1.0
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: 'ap-southeast-1'
+                S3_BUCKET: 'install.emporio.ai'
+                LOCAL_PATH: 'build'
+                PRE_EXECUTION_SCRIPT: '.add_variables.sh'
+      - step:
+          name: Build & Package Form Lambda
+          condition:
+            changesets:
+              includePaths:
+                - "form_lambda/**"          
+          script:
+            - apt-get update && apt-get install -y zip
+            - cd form_lambda
+            - zip code.zip lambda_function.py
+          artifacts:
+            - form_lambda/code.zip
+      - step:
+          name: Update Form Lambda code
+          condition:
+            changesets:
+              includePaths:
+                - "form_lambda/**"            
+          script:
+            - pipe: atlassian/aws-lambda-deploy:0.2.1
+              variables:
+                AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+                AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+                AWS_DEFAULT_REGION: 'ap-southeast-1'
+                FUNCTION_NAME: 'connect_onboarding_form'
+                COMMAND: 'update'
+                ZIP_FILE: 'form_lambda/code.zip'

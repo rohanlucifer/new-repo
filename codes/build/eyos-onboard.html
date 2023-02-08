@@ -1,0 +1,618 @@
+<!doctype html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="author" content="">
+      <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+      <title>eyos-onboarder</title>
+      <link rel="stylesheet" href="css/styles.css">
+      <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+      <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.24.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+      <link rel="preconnect" href="https://fonts.gstatic.com">
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:ital@1&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
+   </head>
+   <body>
+      <header>
+         <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="index.html">eyos.onboard</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+               <ul class="navbar-nav">
+                  <li class="nav-item active">
+                     <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
+                  </li>
+               </ul>
+            </div>
+            <div>
+               <fieldset id="country">
+                  <label for="lang_en">EN</label>
+                  <input type="radio" value="EN" name="country" id="lang_en" onchange="langChange(this)">
+                  <label for="lang_th">TH</label>
+                  <input type="radio" value="TH" name="country" id="lang_th" onchange="langChange(this)">
+                  <label for="lang_ID">ID</label>
+                  <input type="radio" value="ID" name="country" id="lang_id" onchange="langChange(this)">
+               </fieldset>
+               <label for="testCheck">Testing?</label>
+               <input type="checkbox" name="testCheck" id="testCheck" onchange="setTesting(this)">
+            </div>
+         </nav>
+      </header>
+      <main role="main">
+         <!-- Main jumbotron for a primary marketing message or call to action -->
+         <div class="jumbotron">
+            <div class="container">
+               <h1 class="display-3" lang="en" >eyos.onboard</h1>
+               <h1 class="display-3" lang="th" >eyos.onboard.th</h1>
+               <h1 class="display-3" lang="id" >eyos.onboard.unilever</h1>
+               <div class="row">
+                  <div class="col-md">
+                     <span lang="en">Fill in the details below to onboard a merchant</span>
+                     <span lang="id">Lengkapi data dibawah ini</span>
+                     <span lang="th">Fill in the details below to onboard a merchant</span>
+                  </div>
+                  <div class="col-sm">
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div class="container">
+            <div id="store_info" class="row justify-content-md-center" style="display: none">
+               <h2 id="store_data"> GTH000002 | My Store </h2>
+            </div>
+            <div class="row justify-content-md-center">
+               <p id="response"></p>
+               <div id="TNC" class="embed-responsive-item">
+                  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+                  <script src="https://cdncf.esignatures.io/assets/iframeResizer.4.2.10.min.js"></script>
+                  <div class="col-sm">
+                     <iframe id="tncFrame" src="" class="embed-responsive-item" style="display: none">
+                     </iframe>
+                  </div>
+               </div>
+            </div>
+            <form id="formOnboard" onsubmit="formSubmit(event)" >
+               <!-- Example row of columns -->
+               <h3 lang="en">Store:</h3>
+               <h3 lang="id">Toko:</h3>
+               <h3 lang="th"> ร้านค้า:</h3>
+               <div class="row justify-content-md-center">
+                  <div class="col-sm">
+                     <label for="storeName" lang="en">Store Name (*):</label>
+                     <label for="storeName" lang="id">Nama Toko (*):</label>
+                     <label for="storeName" lang="th">ชื่อของร้านค้า (*):</label>
+                     <input type="text" id="storeName" name="storeName" required></br>
+                     <label for="storeNameEN" lang="en">Store Name (EN):</label>
+                     <label for="storeNameEN" lang="th">ชื่อของร้านค้า (EN):</label>
+                     <input type="text" id="storeNameEN" name="storeNameEN" lang="th,en"></br>
+                     <label for="storeAddress" lang="en">Store Address (*):</label>
+                     <label for="storeAddress" lang="id">Alamat Toko (*):</label>
+                     <label for="storeAddress" lang="th">ที่อยู่ของร้านค้า (*):</label>
+                     <input type="text" id="storeAddress" name="storeAddress" required></br>
+                     <label for="storeAddressEN" lang="en">Store Address (EN):</label>
+                     <label for="storeAddressEN" lang="th">ที่อยู่ของร้านค้า (EN):</label>
+                     <input type="text" id="storeAddressEN" name="storeAddressEN" lang="th,en"></br>
+                     <label for="storeLatitude" lang="en">Store Latitude (*):</label>
+                     <label for="storeLatitude" lang="id">Latitude (*):</label>
+                     <label for="storeLatitude" lang="th">ละติจูด (*):</label>
+                     <input type="text" id="storeLatitude" name="storeLatitude" required></br>
+                     <label for="storeLongitude" lang="en">Store Longitude (*):</label>
+                     <label for="storeLongitude" lang="id">Longitude (*):</label>
+                     <label for="storeLongitude" lang="th">ลองจิจูด (*):</label>
+                     <input type="text" id="storeLongitude" name="storeLongitude" required>
+                     <input type="image" src="img/location_icon.png" onclick="getLocation()">
+                     </br>
+                     <label for="storeCity" lang="en">Store City (*):</label>
+                     <label for="storeCity" lang="id">Kota (*):</label>
+                     <label for="storeCity" lang="th"> เมือง (*):</label>
+                     <select id='storeCity' name='storeCity'>
+                        <option value="" disabled selected hidden>Please Choose...</option>
+                     </select>
+					 </br>
+					 <label for="storeASM" lang="en">ASM / KAM:</label>
+                     <label for="storeASM" lang="id">ASM / KAM (*):</label>
+                     <select id='storeASM' name='storeASM' lang='en,id'>
+                        <option value="" disabled selected hidden>Please Choose...</option>
+                     </select>
+					 </br>
+                     <label for="outletCode" lang="en">Outlet Code (*):</label>
+                     <label for="outletCode" lang="id">Outlet Code (*):</label>
+					 <input type="text" id="outletCode" name="outletcode" lang="id,en">
+
+                  </div>
+                  <div class="col-sm">
+                     <label for="storeSecondaryType" lang="en">Secondary Type:</label>
+                     <label for="storeSecondaryType" lang="th">ประเภทรองของร้านค้า :</label>
+                     <select id='storeSecondaryType' name='storeSecondaryType' lang="en">
+                        <option value="" selected>Please Choose...</option>
+                        <option value="Pesantren">Pesantren</option>
+                        <option value="SRC">SRC</option>
+                        <option value="DRP">DRP</option>
+                        <option value="GGSP">GGSP</option>
+                     </select>
+					 </br>
+					 <label for="storeChannelSize" lang="en,id">Store Channel Size</label>
+                     <select id='storeChannelSize' name='storeChannelSize' lang="en,id">
+                        <option value="CASH & CARRY">CASH & CARRY</option>
+                        <option value="FG BIG">FG BIG</option>
+                        <option value="FG MEDIUM">FG MEDIUM</option>
+                        <option value="FG PESANTREN">FG PESANTREN</option>
+                        <option value="FG SMALL">FG SMALL</option>
+                        <option value="SD DOLPHIN">SD DOLPHIN</option>
+                        <option value="SD NON DOLPHIN">SD NON DOLPHIN</option>
+                        <option value="SHOP SALE">SHOP SALE</option>
+                        <option value="SUPERMARKET EC MASS">SUPERMARKET EC MASS</option>
+                        <option value="SUPERMARKET EC PREMIUM">SUPERMARKET EC PREMIUM</option>
+                        <option value="TT BEAUTY RETAILER">TT BEAUTY RETAILER</option>
+                        <option value="TT FOODS">TT FOODS</option>
+                        <option value="TT GROCERY">TT GROCERY</option>
+                        <option value="TT REGULAR">TT REGULAR</option>
+                        <option value="TTB RETAILER BIG">TTB RETAILER BIG</option>
+                        <option value="TTB RETAILER SMALL">TTB RETAILER SMALL</option>
+                        <option value="TTB SECOND DEALER">TTB SECOND DEALER</option>
+                     </select>
+                     </br>
+                     <label for="storeChannel" lang="en">Store Channel (*):</label>
+                     <label for="storeChannel" lang="id">Tipe Toko (*):</label>
+                     <label for="storeChannel" lang="th">ประเภทของร้านค้า (*):</label>
+                     <select id='storeChannel' name='storeChannel' lang="en,id">
+                        <option value="" disabled selected hidden>Please Choose...</option>
+                        <option value="FAMILY GROCER">FAMILY GROCER</option>
+                        <option value="ROUTE TO MARKET">ROUTE TO MARKET</option>
+                        <option value="SECOND DEALER">SECOND DEALER</option>
+                        <option value="SHOP SALES">SHOP SALES</option>
+                        <option value="SUPERMARKETS">SUPERMARKETS</option>
+                        <option value="TRADITIONAL TRADE">TRADITIONAL TRADE</option>
+                        <option value="TRADITIONAL TRADE BEAUTY">TRADITIONAL TRADE BEAUTY</option>
+                     </select>
+                     <select id='storeChannel' name='storeChannel' lang='th'>
+                        <option value="" disabled selected hidden>Please Choose...</option>
+                        <option value="Provision Store">Provision Store</option>
+                        <option value="Local Minimart">Local Minimart</option>
+                        <option value="Local Super Market">Local Super Market</option>
+                        <option value="Pharmacy">Pharmacy</option>
+                        <option value="Beauty Store">Beauty Store</option>
+                        <option value="Wholesaler">Wholesaler</option>
+                     </select>
+                     </br>
+                     <label for="storeBanner" lang="en">Store Banner:</label>
+                     <label for="storeBanner" lang="id">Grup Toko:</label>
+                     <label for="storeBanner" lang="th">กลุ่มของร้านค้า :</label>
+                     <input type="text" id="storeGroups" name="storeGroups"></br>
+                     <label for="storeSurrounding" lang="en">Store Surrounding (*):</label>
+                     <label for="storeSurrounding" lang="id">Tipe Sekitar Toko (*):</label>
+                     <label for="storeSurrounding" lang="th">พื้นที่รอบข้างร้านค้า (*):</label>
+                     <select id='storeSurrounding' name="storeSurrounding" required>
+                        <option value="" disabled selected hidden>Please Choose...</option>
+                        <option value="Transport Hub / Airport">Transport Hub / Airport</option>
+                        <option value="Condo">Condo</option>
+                        <option value="Gas Station">Gas Station</option>
+                        <option value="Hospital">Hospital</option>
+                        <option value="Industrial Area">Industrial Area</option>
+                        <option value="Office">Office</option>
+                        <option value="Shopping Mall">Shopping Mall</option>
+                        <option value="Residential / Village">Residential / Village</option>
+                        <option value="School / Education">School / Education</option>
+                        <option value="Tourist & Hotel">Tourist & Hotel</option>
+                        <option value="Wet Market">Wet Market</option>
+                        <option value="Temple / Religious">Temple / Religious</option>
+                     </select>
+                     </br>
+                     <label for="storePostCode" lang="en">Store Post Code (*):</label>
+                     <label for="storePostCode" lang="id">Kode Pos (*):</label>
+                     <label for="storePostCode" lang="th">รหัสไปรษณีย์ร้านค้า (*):</label>
+                     <input type="text" id="storePostCode" name="storePostCode" required></br>
+                     <label for="Agency" lang="en">Agency (*):</label>
+                     <label for="Agency" lang="id">Agency (*):</label>
+                     <label for="Agency" lang="th"> เอเจนซี่ (*):</label>
+                     <select id='Agency' name='Agency' lang="en,id">
+                        <option value="" disabled selected hidden>Please Choose...</option>
+                        <option value="In House">In House</option>
+                        <option value="Reta">Reta</option>
+                        <option value="Well-Done">Well-Done</option>
+                     </select>
+                     <select id='Agency' name='Agency' lang="th">
+                        <option value="" disabled selected hidden>Please Choose...</option>
+                        <option value="In House">In House</option>
+                        <option value="Adecco">Adecco</option>
+                     </select>
+                     </br>
+                     <label for="Country" lang="en">Country (*):</label>
+                     <label for="Country" lang="id">Country (*):</label>
+                     <label for="Country" lang="th">ประเทศ (*):</label>
+                     <select id='Country' name='Country'>
+                        <option value="" disabled selected hidden>Please Choose...</option>
+                        <option value="TH">Thailand</option>
+                        <option value="ID">Indonesia</option>
+                     </select>
+                  </div>
+               </div><h3 lang="en">Distributor:</h3>
+               <h3 lang="id">Distributor:</h3>
+               <div class="row justify-content-md-center">
+                  <div class="col-sm">
+                     <label for="distributorName" lang="en">Distributor Name (*):</label>
+                     <label for="distributorName" lang="id">Distributor Name (*):</label>
+                     <input type="text" id="distributorName" name="distributorName" required></br>
+					 <label for="distributorCode" lang="en">Distributor Code (*):</label>
+                     <label for="distributorCode" lang="id">Distributor Code (*):</label>
+                     <input type="text" id="distributorCode" name="distributorCode" required>
+				  </div>
+				  <div class="col-sm">
+				  <label for="distributorType" lang="en">Dist Type (*):</label>
+                     <label for="distributorType" lang="id">Dist Type (*):</label>
+                     <select id='distributorType' name='distributorType'>
+                        <option value="" disabled selected hidden>Please Choose...</option>
+						<option value="DIRECT">DIRECT</option>
+						<option value="GT">GT</option>
+						<option value="GT2">GT2</option>
+						<option value="MT">MT</option>
+                     </select>
+				  </div>
+				</div>
+               <h3 lang="en">Assesment:</h3>
+               <h3 lang="id">Penilaian:</h3>
+               <h3 lang="th">การประเมิน:</h3>
+               <div class="row justify-content-md-center">
+                  <div class="col-sm">
+                     <label for="storeHasPOS" lang="en">Store Has POS</label>
+                     <label for="storeHasPOS" lang="id">Store Has POS</label>
+                     <label for="storeHasPOS" lang="th">Store Has POS</label>
+                     <input type="checkbox" id="storeHasPOS" name="storeHasPOS"></br>
+                     <label for="storePOSType" lang="en">POS Type</label>
+                     <label for="storePOSType" lang="id">Tipe POS</label>
+                     <label for="storePOSType" lang="th">POS Type</label>
+                     <select id='storePOSType' name='storePOSType'>
+                        <option value="" disabled selected hidden>Please Choose...</option>
+                        <option value="Windows">Windows</option>
+                        <option value="Android">Android</option>
+                        <option value="Linux">Linux</option>
+                        <option value="Other">Other</option>
+                     </select>
+                     </br>
+                     <label for="storeSize" lang="en">Store Size (m/sq)</label>
+                     <label for="storeSize" lang="id">Ukuran Toko (m/sq)</label>
+                     <label for="storeSize" lang="th">ขนาดของร้านค้า (m/sq)</label>
+                     <input type="number" id="storeSize" name="storeSize" max="100000"></br>
+                     <label for="storeB2BSales" lang="en">B2B Sales (%)</label>
+                     <label for="storeB2BSales" lang="id">Penjualan B2B (%)</label>
+                     <label for="storeB2BSales" lang="th">% ยอดขายให้ลูกค้าธุรกิจ  (%)</label>
+                     <input type="number" id="storeB2BSales" name="storeB2BSales" max="100000">
+                  </div>
+                  <div class="col-sm">
+                     <label for="storeSellsOnline" lang="en">Store sells online?</label>
+                     <label for="storeSellsOnline" lang="id">Jualan Online?</label>
+                     <label for="storeSellsOnline" lang="th">มีการขายออนไลน์</label>
+                     <input type="checkbox" id="storeSellsOnline" name="storeSellsOnline"></br>
+                     <label for="storeOnlineSales" lang="en">Online Sales Through POS (%)</label>
+                     <label for="storeOnlineSales" lang="id">Penjualan Online (%)</label>
+                     <label for="storeOnlineSales" lang="th">% ยอดขายจากออนไลน์</label>
+                     <input type="number" id="storeOnlineSales" name="storeOnlineSales" max="100"></br>
+                     <label for="storeShelfSpace" lang="en">Store Shelf Space (%)</label>
+                     <label for="storeShelfSpace" lang="id">Ukuran Rak di Toko (%)</label>
+                     <label for="storeShelfSpace" lang="th">% ความหนาแน่นของชั้นวางสินค้า</label>
+                     <input type="number" id="storeShelfSpace" name="storeShelfSpace" max="100"></br>
+                     <label for="storeTillNumber" lang="en">Number of Tills</label>
+                     <label for="storeTillNumber" lang="id">Jumlah POS Toko</label>
+                     <label for="storeTillNumber" lang="th">จำนวนเครื่อง POS</label>
+                     <input type="number" id="storeTillNumber" name="storeTillNumber" max="1000">
+                  </div>
+               </div>
+               <h3 lang="en">Photos:</h3>
+               <h3 lang="id">Foto:</h3>
+               <h3 lang="th">รูปภาพ:</h3>
+               <div class="row justify-content-md-center">
+                  <div class="col-sm">
+                     <label for="storeFrontPhoto" lang="en">Store Front Photo (*):</label>
+                     <label for="storeFrontPhoto" lang="id">Foto Tampak Depan(*):</label>
+                     <label for="storeFrontPhoto" lang="th">ภาพถ่ายหน้าร้านค้า (*):</label>
+                     <input type="file" id="storeFrontPhoto" name="storeFrontPhoto" accept="image/*" onchange="s3upload(this.id)" required></br>
+                     <label for="storeShelfPhoto" lang="en">Store Shelf Photo:</label>
+                     <label for="storeShelfPhoto" lang="id">Foto Rak Toko:</label>
+                     <label for="storeShelfPhoto" lang="th">รููปภาพชั้นวางสินค้า:</label>
+                     <input type="file" id="storeShelfPhoto" name="storeShelfPhoto" accept="image/*" onchange="s3upload(this.id)" required></br>
+                  </div>
+                  <div class="col-sm">
+                     <label for="storeTillPhoto" lang="en">Store Till Photo:</label>
+                     <label for="storeTillPhoto" lang="id">Foto POS Toko:</label>
+                     <label for="storeTillPhoto" lang="th">รูปภาพเครื่องคิดเงิน:</label>
+                     <input type="file" id="storeTillPhoto" name="storeTillPhoto" accept="image/*" onchange="s3upload(this.id)" required></br>
+                  </div>
+               </div>
+               <h3 lang="en">Owner:</h3>
+               <h3 lang="id">Owner:</h3>
+               <h3 lang="th">เจ้าของ:</h3>
+               <div class="row justify-content-md-center">
+                  <div class="col-sm">
+                     <label for="ownerName" lang="en">Owner Name (*):</label>
+                     <label for="ownerName" lang="id">Nama Owner (*):</label>
+                     <label for="ownerName" lang="th">ชื่อเจ้าของร้าน  (*):</label>
+                     <input type="text" id="ownerName" name="ownerName" required></br>
+                     <label for="ownerMobile" lang="en">Owner Mobile (*):</label>
+                     <label for="ownerMobile" lang="id">No HP Owner (*):</label>
+                     <label for="ownerMobile" lang="th">เบอร์โทรศัพท์เจ้าของร้าน (*):</label>
+                     <input type="tel" id="ownerMobile" name="ownerMobile" required>
+                     <span id="valid-msg" class="hide">
+                        <svg style="fill: green" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                           <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"/>
+                        </svg>
+                     </span>
+                     <span id="error-msg" class="hide"></span></br>
+                     <label for="ownerPhone" lang="en">Owner Telephone:</label>
+                     <label for="ownerPhone" lang="id">Owner Telepon:</label>
+                     <label for="ownerPhone" lang="th">เจ้าของโทรศัพท์ :</label>
+                     <input type="tel" id="ownerPhone" name="ownerPhone"></br>
+                     <label for="ownerEmail" lang="en">Owner Email:</label>
+                     <label for="ownerEmail" lang="id">Owner Email:</label>
+                     <label for="ownerEmail" lang="th">อีเมลเจ้าของ:</label>
+                     <input type="text" id="ownerEmail" name="ownerEmail"></br>
+                     <label for="ownerBankName" lang="en">Bank Name (*):</label>
+                     <label for="ownerBankName" lang="id">Nama Bank (*):</label>
+                     <label for="ownerBankName" lang="th">ชื่อธนาคารของบัญชีเจ้าของร้าน (*):</label>
+                     <select id='ownerBankName' name='ownerBankName' lang="id,en">
+                        <option value="" disabled selected hidden>Please Choose...</option>
+                        <option value="ACEH">BPD Aceh</option>
+                        <option value="ACEH_UUS">BPD Aceh UUS</option>
+                        <option value="AGRIS">Bank Agris</option>
+                        <option value="AGRONIAGA">Bank BRI Agroniaga</option>
+                        <option value="AMAR">Bank Amar Indonesia</option>
+                        <option value="ANDARA">Bank Andara</option>
+                        <option value="ANGLOMAS">Anglomas International Bank</option>
+                        <option value="ANZ">Bank ANZ Indonesia</option>
+                        <option value="ARTA_NIAGA_KENCANA">Bank Arta Niaga Kencana</option>
+                        <option value="ARTHA">Bank Artha Graha International</option>
+                        <option value="ARTOS">Bank Artos Indonesia</option>
+                        <option value="BALI">BPD Bali</option>
+                        <option value="BAML">Bank of America Merill-Lynch</option>
+                        <option value="BANGKOK">Bangkok Bank</option>
+                        <option value="BANTEN">BPD Banten</option>
+                        <option value="BCA">Bank Central Asia (BCA)</option>
+                        <option value="BCA_SYR">Bank Central Asia (BCA) Syariah</option>
+                        <option value="BENGKULU">BPD Bengkulu</option>
+                        <option value="BISNIS_INTERNASIONAL">Bank Bisnis Internasional</option>
+                        <option value="BJB">Bank BJB</option>
+                        <option value="BJB_SYR">Bank BJB Syariah</option>
+                        <option value="BNI">Bank Negara Indonesia (BNI)</option>
+                        <option value="BNI_SYR">Bank BNI Syariah</option>
+                        <option value="BNP_PARIBAS">Bank BNP Paribas</option>
+                        <option value="BOC">Bank of China (BOC)</option>
+                        <option value="BRI">Bank Rakyat Indonesia (BRI)</option>
+                        <option value="BRI_SYR">Bank Syariah BRI</option>
+                        <option value="BTN">Bank Tabungan Negara (BTN)</option>
+                        <option value="BTN_UUS">Bank Tabungan Negara (BTN) UUS</option>
+                        <option value="BTPN_SYARIAH">BTPN Syariah</option>
+                        <option value="BUKOPIN">Bank Bukopin</option>
+                        <option value="BUKOPIN_SYR">Bank Syariah Bukopin</option>
+                        <option value="BUMI_ARTA">Bank Bumi Arta</option>
+                        <option value="CAPITAL">Bank Capital Indonesia</option>
+                        <option value="CCB">China Construction Bank Indonesia</option>
+                        <option value="CENTRATAMA">Centratama Nasional Bank</option>
+                        <option value="CHINATRUST">Bank Chinatrust Indonesia</option>
+                        <option value="CIMB">Bank CIMB Niaga</option>
+                        <option value="CIMB_UUS">Bank CIMB Niaga UUS</option>
+                        <option value="CITIBANK">Citibank</option>
+                        <option value="COMMONWEALTH">Bank Commonwealth</option>
+                        <option value="DAERAH_ISTIMEWA">BPD Daerah Istimewa Yogyakarta (DIY)</option>
+                        <option value="DAERAH_ISTIMEWA_UUS">BPD Daerah Istimewa Yogyakarta (DIY) UUS</option>
+                        <option value="DANAMON">Bank Danamon</option>
+                        <option value="DANAMON_UUS">Bank Danamon UUS</option>
+                        <option value="DBS">Bank DBS Indonesia</option>
+                        <option value="DEUTSCHE">Deutsche Bank</option>
+                        <option value="DINAR_INDONESIA">Bank Dinar Indonesia</option>
+                        <option value="DKI">Bank DKI</option>
+                        <option value="DKI_UUS">Bank DKI UUS</option>
+                        <option value="EXIMBANK">Indonesia Eximbank</option>
+                        <option value="FAMA">Bank Fama International</option>
+                        <option value="GANESHA">Bank Ganesha</option>
+                        <option value="HANA">Bank Hana</option>
+                        <option value="HARDA_INTERNASIONAL">Bank Harda Internasional</option>
+                        <option value="HIMPUNAN_SAUDARA">Bank Himpunan Saudara 1906</option>
+                        <option value="HSBC">HSBC Indonesia (formerly Bank Ekonomi Raharja)</option>
+                        <option value="HSBC_UUS">Hongkong and Shanghai Bank Corporation (HSBC) UUS</option>
+                        <option value="ICBC">Bank ICBC Indonesia</option>
+                        <option value="INA_PERDANA">Bank Ina Perdania</option>
+                        <option value="INDEX_SELINDO">Bank Index Selindo</option>
+                        <option value="INDIA">Bank of India Indonesia</option>
+                        <option value="JAMBI">BPD Jambi</option>
+                        <option value="JAMBI_UUS">BPD Jambi UUS</option>
+                        <option value="JASA_JAKARTA">Bank Jasa Jakarta</option>
+                        <option value="JAWA_TENGAH">BPD Jawa Tengah</option>
+                        <option value="JAWA_TENGAH_UUS">BPD Jawa Tengah UUS</option>
+                        <option value="JAWA_TIMUR">BPD Jawa Timur</option>
+                        <option value="JAWA_TIMUR_UUS">BPD Jawa Timur UUS</option>
+                        <option value="JPMORGAN">JP Morgan Chase Bank</option>
+                        <option value="JTRUST">Bank JTrust Indonesia</option>
+                        <option value="KALIMANTAN_BARAT">BPD Kalimantan Barat</option>
+                        <option value="KALIMANTAN_BARAT_UUS">BPD Kalimantan Barat UUS</option>
+                        <option value="KALIMANTAN_SELATAN">BPD Kalimantan Selatan</option>
+                        <option value="KALIMANTAN_SELATAN_UUS">BPD Kalimantan Selatan UUS</option>
+                        <option value="KALIMANTAN_TENGAH">BPD Kalimantan Tengah</option>
+                        <option value="KALIMANTAN_TIMUR">BPD Kalimantan Timur</option>
+                        <option value="KALIMANTAN_TIMUR_UUS">BPD Kalimantan Timur UUS</option>
+                        <option value="KESEJAHTERAAN_EKONOMI">Bank Kesejahteraan Ekonomi</option>
+                        <option value="LAMPUNG">BPD Lampung</option>
+                        <option value="MALUKU">BPD Maluku</option>
+                        <option value="MANDIRI">Bank Mandiri</option>
+                        <option value="MANDIRI_SYR">Bank Syariah Mandiri</option>
+                        <option value="MANDIRI_TASPEN">Mandiri Taspen Pos</option>
+                        <option value="MASPION">Bank Maspion Indonesia</option>
+                        <option value="MAYAPADA">Bank Mayapada International</option>
+                        <option value="MAYBANK">Bank Maybank</option>
+                        <option value="MAYBANK_SYR">Bank Maybank Syariah Indonesia</option>
+                        <option value="MAYORA">Bank Mayora</option>
+                        <option value="MEGA">Bank Mega</option>
+                        <option value="MEGA_SYR">Bank Syariah Mega</option>
+                        <option value="MESTIKA_DHARMA">Bank Mestika Dharma</option>
+                        <option value="MITRA_NIAGA">Bank Mitra Niaga</option>
+                        <option value="MITSUI">Bank Sumitomo Mitsui Indonesia</option>
+                        <option value="MIZUHO">Bank Mizuho Indonesia</option>
+                        <option value="MNC_INTERNASIONAL">Bank MNC Internasional</option>
+                        <option value="MUAMALAT">Bank Muamalat Indonesia</option>
+                        <option value="MULTI_ARTA_SENTOSA">Bank Multi Arta Sentosa</option>
+                        <option value="NATIONALNOBU">Bank Nationalnobu</option>
+                        <option value="NUSA_TENGGARA_BARAT">BPD Nusa Tenggara Barat</option>
+                        <option value="NUSA_TENGGARA_BARAT_UUS">BPD Nusa Tenggara Barat UUS</option>
+                        <option value="NUSA_TENGGARA_TIMUR">BPD Nusa Tenggara Timur</option>
+                        <option value="NUSANTARA_PARAHYANGAN">Bank Nusantara Parahyangan</option>
+                        <option value="OCBC">Bank OCBC NISP</option>
+                        <option value="OCBC_UUS">Bank OCBC NISP UUS</option>
+                        <option value="OKE">Bank Oke Indonesia</option>
+                        <option value="PANIN">Bank Panin</option>
+                        <option value="PANIN_SYR">Bank Panin Syariah</option>
+                        <option value="PAPUA">BPD Papua</option>
+                        <option value="PERMATA">Bank Permata</option>
+                        <option value="PERMATA_UUS">Bank Permata UUS</option>
+                        <option value="PRIMA_MASTER">Prima Master Bank</option>
+                        <option value="QNB_INDONESIA">Bank QNB Indonesia</option>
+                        <option value="RABOBANK">Bank Rabobank International Indonesia</option>
+                        <option value="RBS">Royal Bank of Scotland (RBS)</option>
+                        <option value="RESONA">Bank Resona Perdania</option>
+                        <option value="RIAU_DAN_KEPRI">BPD Riau Dan Kepri</option>
+                        <option value="RIAU_DAN_KEPRI_UUS">BPD Riau Dan Kepri UUS</option>
+                        <option value="ROYAL">Bank Royal Indonesia</option>
+                        <option value="SAHABAT_SAMPOERNA">Bank Sahabat Sampoerna</option>
+                        <option value="SBI_INDONESIA">Bank SBI Indonesia</option>
+                        <option value="SHINHAN">Bank Shinhan Indonesia</option>
+                        <option value="SINARMAS">Bank Sinarmas</option>
+                        <option value="SINARMAS_UUS">Bank Sinarmas UUS</option>
+                        <option value="STANDARD_CHARTERED">Standard Charted Bank</option>
+                        <option value="SULAWESI">BPD Sulawesi Tengah</option>
+                        <option value="SULAWESI_TENGGARA">BPD Sulawesi Tenggara</option>
+                        <option value="SULSELBAR">BPD Sulselbar</option>
+                        <option value="SULSELBAR_UUS">BPD Sulselbar UUS</option>
+                        <option value="SULUT">BPD Sulut</option>
+                        <option value="SUMATERA_BARAT">BPD Sumatera Barat</option>
+                        <option value="SUMATERA_BARAT_UUS">BPD Sumatera Barat UUS</option>
+                        <option value="SUMSEL_DAN_BABEL">BPD Sumsel Dan Babel</option>
+                        <option value="SUMSEL_DAN_BABEL_UUS">BPD Sumsel Dan Babel UUS</option>
+                        <option value="SUMUT">BPD Sumut</option>
+                        <option value="SUMUT_UUS">BPD Sumut UUS</option>
+                        <option value="TABUNGAN_PENSIUNAN_NASIONAL">Bank Tabungan Pensiunan Nasional (BTPN)</option>
+                        <option value="TOKYO">Bank of Tokyo Mitsubishi UFJ (MUFJ)</option>
+                        <option value="UOB">Bank UOB Indonesia</option>
+                        <option value="VICTORIA_INTERNASIONAL">Bank Victoria Internasional</option>
+                        <option value="VICTORIA_SYR">Bank Victoria Syariah</option>
+                        <option value="WOORI">Bank Woori Indonesia</option>
+                        <option value="WOORI_SAUDARA">Bank Woori Saudara Indonesia 1906</option>
+                        <option value="YUDHA_BHAKTI">Bank Yudha Bhakti</option>
+                        <option value="GOPAY">Gopay</option>
+                        <option value="OVO">OVO</option>
+                        <option value="DANA">DANA</option>
+                        <option value="LINKAJA">LinkAja</option>
+                        <option value="SHOPEEPAY">ShopeePay</option>
+                     </select>
+                     <select id='ownerBankName' name='ownerBankName' lang='th'>
+                        <option value="" disabled selected hidden>Please Choose...</option>
+                        <option value="ANZ">ANZ Bank</option>
+                        <option value="BAAC">Banking for Agriculture and Agricultral Cooperatives</option>
+                        <option value="BAY">Bank of Ayudhya</option>
+                        <option value="BBL">Bangkok Bank</option>
+                        <option value="BOC">Bank of China</option>
+                        <option value="CIMBT">CIMB Thai Bank</option>
+                        <option value="CITI">Citibank</option>
+                        <option value="DBBK">Deutsche Bank AG.</option>
+                        <option value="GHB">Government Housing Bank</option>
+                        <option value="GSB">Government Savings Bank</option>
+                        <option value="HSBC">Hongkong and Shanghai Banking Corporation</option>
+                        <option value="ICBC">Industrial and Commercial Bank Of China</option>
+                        <option value="IOBA">Indian Oversea Bank</option>
+                        <option value="KBANK">Kasikornbank</option>
+                        <option value="KKP">Kiatnakin Bank</option>
+                        <option value="KTB">Krung Thai Bank</option>
+                        <option value="LHBANK">Land and Houses Bank</option>
+                        <option value="MHCB">Mizuho Bank</option>
+                        <option value="SCB">Siam Commercial Bank</option>
+                        <option value="SCBT">Standard Chartered Bank</option>
+                        <option value="SMBC">Sumitomo Mitsui Banking Corporation</option>
+                        <option value="TBANK">Thanachart Bank</option>
+                        <option value="TCRB">Thai Credit Retail Bank</option>
+                        <option value="TISCO">Tisco Bank</option>
+                        <option value="TMB">TMB Bank</option>
+                        <option value="UOBT">United Overseas Bank</option>
+                     </select>
+                     </br>
+                     <label for="ownerBankAccountName" lang="en">Bank Account Name (*):</label>
+                     <label for="ownerBankAccountName" lang="id">Nama Pemilik Rekening (*):</label>
+                     <label for="ownerBankAccountName" lang="th">ชื่อเจ้าของบัญชีธนาคาร (*):</label>
+                     <input type="text" id="ownerBankAccountName" name="ownerBankAccountName" ></br>
+                     <label for="ownerBankAccountNumber" lang="en">Bank Account Number (*):</label>
+                     <label for="ownerBankAccountNumber" lang="id">Nomor Rekening (*):</label>
+                     <label for="ownerBankAccountNumber" lang="th">หมายเลขบัญชีธนาคาร (*):</label>
+                     <input type="text" id="ownerBankAccountNumber" name="ownerBankAccountNumber">
+                  </div>
+                  <div class="col-sm">
+                     <label for="retailerName" lang="en">Retailer Name (*):</label>
+                     <label for="retailerName" lang="id">Alamat Retailer (*):</label>
+                     <label for="retailerName" lang="th">ชื่อจดทะเบียนของร้านค้า (*):</label>
+                     <input type="text" id="retailerName" name="retailerName" required></br>
+                     <label for="retailerNameEN" lang="en">Retailer Name (EN) (*):</label>
+                     <label for="retailerNameEN" lang="th">ชื่อจดทะเบียนของร้านค้า (EN):</label>
+                     <input type="text" id="retailerNameEN" name="retailerNameEN" lang="th,en"></br>
+                     <label for="retailerAddress" lang="en">Retailer Address (*):</label>
+                     <label for="retailerAddress" lang="id">Alamat Retailer (*):</label>
+                     <label for="retailerAddress" lang="th">ที่อยู่ที่จดทะเเบียนของร้านค้า (*):</label>
+                     <input type="text" id="retailerAddress" name="retailerAddress" required></br>
+                     <label for="retailerAddressEN" lang="en">Retailer Address (EN):</label>
+                     <label for="retailerAddressEN" lang="th">ที่อยู่ที่จดทะเเบียนของร้านค้า (EN):</label>
+                     <input type="text" id="retailerAddressEN" name="retailerAddressEN" lang="th,en"></br>
+                     <label for="retailerCompanyID" lang="en">Company ID:</label>
+                     <label for="retailerCompanyID" lang="id">Company ID:</label>
+                     <label for="retailerCompanyID" lang="th">ID บริษัท:</label>
+                     <input type="text" id="retailerCompanyID" name="retailerCompanyID"></br>
+                     <label for="retailerCity" lang="en">Retailer City (*):</label>
+                     <label for="retailerCity" lang="id">Kota Retailer (*):</label>
+                     <label for="retailerCity" lang="th"> เมือง (*):</label>
+                     <select id='retailerCity' name='retailerCity'>
+                        <option value="" disabled selected hidden>Please Choose...</option>
+                     </select>
+                     </br>
+                     <label for="retailerPostCode" lang="en">Retailer Post Code (*):</label>
+                     <label for="retailerPostCode" lang="id">Kode Pos (*):</label>
+                     <label for="retailerPostCode" lang="th">รหัสไปรษณีย์ที่จดทะเบียนร้าน (*):</label>
+                     <input type="text" id="retailerPostCode" name="retailerPostCode" required></br>
+                     <input type="button" value="Copy Store Address" onclick="copyStoreAddress()" lang="en">
+                     <input type="button" value="Salin Alamat Toko" onclick="copyStoreAddress()" lang="id">
+                     <input type="button" value="Copy Store Address" onclick="copyStoreAddress()" lang="th">
+                  </div>
+               </div>
+			   <h3 lang="id,en">Remarks:</h3>
+               <div class="row justify-content-md-center">
+                  <div class="col-sm">
+				  <label for="remarks" lang="en,id">Any additional remarks (*):</label></br>
+				  <input type="text" id ="remarks" lang="en,id" style="width: 100%">
+				  </div>
+			   </div>
+               <!-- hidden fields -->
+               <input type="hidden" id="storeFrontPhotos3" name="storeFrontPhotos3" >
+               <input type="hidden" id="storeShelfPhotos3" name="storeShelfPhotos3" >
+               <input type="hidden" id="storeTillPhotos3" name="storeTillPhotos3" >
+               <input type="hidden" id="isTest" name="isTest">
+               </br>
+               <div class="row justify-content-md-center">
+                  <input type="submit" value="Submit" id="submit">
+               </div>
+            </form>
+         </div>
+         <script></script>
+         <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.5/js/standalone/selectize.min.js" integrity="sha512-JFjt3Gb92wFay5Pu6b0UCH9JIOkOGEfjIi7yykNWUwj55DBBp79VIJ9EPUzNimZ6FvX41jlTHpWFUQjog8P/sw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.5/css/selectize.bootstrap5.css" integrity="sha512-wD3+yEMEGhx4+wKKWd0bNGCI+fxhDsK7znFYPvf2wOVxpr7gWnf4+BKphWnUCzf49AUAF6GYbaCBws1e5XHSsg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+         <script src="js/vars.js"></script>
+         <script src="js/eyos-onboard.js"></script>
+      </main>
+      <p>
+         &copy;
+         <span id="copyright">
+            <script>document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))</script>
+         </span>
+         eyos.onboard
+      </p>
+      <!-- Bootstrap core JavaScript
+         ================================================== -->
+      <!-- Placed at the end of the document so the pages load faster -->
+   </body>
+</html>
