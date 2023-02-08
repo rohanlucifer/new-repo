@@ -2,15 +2,14 @@ name: pipeline
 
 on:
     push:
-        branches: ['master','dev']
+        branches: ['master','developer']
         paths: 
            - 'build/**'
-    #pull_request:
-     #   branches: ['main', 'develop', 'prod', 'newprod']
-jobs:
-    dev:
+jobs
+
+  dev-branch:
         runs-on: ubuntu-latest
-        #if: contains('refs/heads/develop',github.ref)
+        if: contains('refs/heads/developer',github.ref)
         steps:
             - uses: actions/checkout@v2
               with:
@@ -31,4 +30,3 @@ jobs:
                   S3_BUCKET: 'install.emporio.ai/dev'
                   LOCAL_PATH: 'build'
                   PRE_EXECUTION_SCRIPT: '.add_variables.sh'
-
