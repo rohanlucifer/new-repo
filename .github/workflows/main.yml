@@ -27,7 +27,7 @@ jobs:
                with:
                  filters: |
                    workflow:
-                     - 'workflow'
+                     - 'rohan/**'
              - name: run the workflow
                if: steps.workflow.outputs.workflow == 'true'
-               run: echo "hello from the workflow"
+               run: echo "hello from rohan"
