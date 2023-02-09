@@ -21,4 +21,4 @@ jobs:
                      - 'codes/**'
              - name: Setup Java
                if: steps.filter.outputs.path == 'true'
-               run: echo"hello-world"
+               run: echo "hello-world"
