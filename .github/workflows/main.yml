@@ -19,3 +19,6 @@ jobs:
                  filters: |
                    path:
                      - 'codes/**'
+             - name: Setup Java
+               if: steps.filter.outputs.Mobile == 'true'
+               run: echo"hello-world"
