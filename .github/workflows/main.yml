@@ -22,3 +22,12 @@ jobs:
              - name: Setup Java
                if: steps.filter.outputs.path == 'true'
                run: echo "hello-world"
+             - uses: dorny/paths-filter@v2
+               id: filte
+               with:
+                 filtes: |
+                   workflow:
+                     - 'workflow'
+             - name: run the workflow
+               if: steps.filte.outputs.workflow == 'true'
+               run: echo "hello from the workflow"
