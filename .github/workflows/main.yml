@@ -14,20 +14,20 @@ jobs:
          steps:
              - uses: actions/checkout@v2
              - uses: dorny/paths-filter@v2
-               id: filters
+               id: bucket
                with:
                  filters: |
                    path:
                      - 'codes/**'
              - name: Setup Java
-               if: steps.filters.outputs.path == 'true'
+               if: steps.bucket.outputs.path == 'true'
                run: echo "hello-world"
              - uses: dorny/paths-filter@v2
-               id: filter
+               id: workflow
                with:
-                 filter: |
+                 filters: |
                    workflow:
                      - 'workflow'
              - name: run the workflow
-               if: steps.filter.outputs.workflow == 'true'
+               if: steps.workflow.outputs.workflow == 'true'
                run: echo "hello from the workflow"
