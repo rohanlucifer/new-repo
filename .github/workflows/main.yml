@@ -10,6 +10,9 @@ on:
 jobs:
   dev-branch:
          runs-on: ubuntu-latest
+         outputs:
+            output1: ${{ steps.bucket.outputs.path }}
+            output2: ${{ steps.workflow.outputs }}
 # Mobile folder job.
          steps:
              - uses: actions/checkout@v2
