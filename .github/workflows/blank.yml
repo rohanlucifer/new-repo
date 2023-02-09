@@ -1,0 +1,32 @@
+name: pipeline
+
+on:
+    push:
+        branches: ['master','developer']
+        paths: 
+           - 'build/**'
+jobs
+
+  dev-branch:
+        runs-on: ubuntu-latest
+        if: contains('refs/heads/developer',github.ref)
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                token : ${{secrets.ACCESS_TOKEN}}
+                #submodules : true
+            - name: Configure Credentials For Develop
+              run: |
+                    echo 'mv build/js/vars_dev.js build/js/vars.js' >> .add_variables.sh
+                    chmod 005 .add_variables.sh
+                    cat .add_variables.sh
+                    pipe: atlassian/aws-s3-deploy:1.1.0
+            - name: configure aws credentials
+              uses: aws-actions/configure-aws-credentials@v1
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: us-east-2
+                  S3_BUCKET: 'install.emporio.ai/dev'
+                  LOCAL_PATH: 'build'
+                  PRE_EXECUTION_SCRIPT: '.add_variables.sh'
