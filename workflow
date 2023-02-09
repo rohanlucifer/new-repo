@@ -23,6 +23,8 @@ jobs:
              S3_BUCKET: 'install.emporio.ai/dev'
              LOCAL_PATH: 'build'
              PRE_EXECUTION_SCRIPT: '.add_variables.sh'
+             
+             ff
 
 
 
