@@ -1,36 +1,33 @@
-name: CI/CD. 
+name: CI/CD
 on:
   push:
     branches:
     - main
-  #pull_request:
-   # branches:
-    #- master
+    paths:
+      - 'codes/**'
+      - 'lambda/**'
+
+env:
+  FOLDER: ${{ env.FOLDER.commit == "true" }}
+
 
 jobs:
   dev-branch:
-         runs-on: ubuntu-latest
-         outputs:
-            output1: ${{ steps.bucket.outputs.path }}
-            output2: ${{ steps.workflow.outputs }}
-# Mobile folder job.
-         steps:
-             - uses: actions/checkout@v2
-             - uses: dorny/paths-filter@v2
-               id: bucket
-               with:
-                 filters: |
-                   path:
-                     - 'codes/**'
-             - name: Setup Java
-               if: steps.bucket.outputs.path == 'true'
-               run: echo "hello-world"
-             - uses: dorny/paths-filter@v2
-               id: workflow
-               with:
-                 filters: |
-                   workflow:
-                     - 'workflow'
-             - name: run the workflow
-               if: steps.workflow.outputs.workflow == 'true'
-               run: echo "hello from the workflow"
+        runs-on: ubuntu-latest
+        if: contains('refs/heads/main',github.ref)
+        steps:
+            - uses: actions/checkout@v2
+              #with:
+               # token : ${.ACCESS_TOKEN}}
+                #submodules : true
+            - name: rename the file
+              if: env.FOLDER == 'codes'
+              run: echo "Running tests for folder1"
+              env:
+               MY_VAR: "codes"
+                  
+            - name: configure aws credentials
+              if: env.FOLDER == 'lambda'
+              run: whoami
+              env:
+               MY_VAR: "lambda"
